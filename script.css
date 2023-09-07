@@ -66,3 +66,15 @@
     height: 200px;
     margin-bottom: 10px;
 }
+
+.filter{
+    padding:5px 5px;
+    font-size: 14px;
+    border: none;
+    border-radius: 3px;
+    margin-top: 10px;
+    background-color: pink;
+    cursor: pointer;
+    height: 30px;
+    width: 100px;
+}

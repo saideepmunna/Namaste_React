@@ -1,7 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import ResContainer from "./components/RestaurantContainer"
+import ResContainer from "./components/ResContainer"
 import Header from "./components/Header";
+
 
 const App = () => {
   return (
