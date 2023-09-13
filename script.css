@@ -78,3 +78,59 @@
     height: 30px;
     width: 100px;
 }
+
+.myShimmer{
+    display: grid;
+    grid-template-columns: repeat(4, 250px);
+    gap: 15px;
+    padding: 10px;
+    justify-content: center;
+}
+
+.shimmerItem{
+    background-color: rgb(221, 231, 231);
+    height: 300px;
+}
+
+.loginBtn{
+    padding: 5px 10px;
+    cursor: pointer;
+    background-color: aquamarine;
+    border: none;
+    border-radius: 5px;
+}
+
+.additions{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.inputBar{
+    background-color: aliceblue;
+    height: 30px;
+    border-radius: 5px;
+    font-size: medium;
+    padding: 0 4px;
+
+}
+.searchBtn{
+    height: 30px;
+    background-color: azure;
+    border-radius: 5px;
+    margin-left: 5px;
+    cursor: pointer;
+    padding: 0 4px;
+    font-size: medium;
+}
+
+.server404{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.server404 img{
+    
+    height: 80vh
+}
