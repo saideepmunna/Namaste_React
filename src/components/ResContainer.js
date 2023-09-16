@@ -15,7 +15,7 @@ const ResContainer = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  },[]);
 
   const fetchData = async () => {
     try {
