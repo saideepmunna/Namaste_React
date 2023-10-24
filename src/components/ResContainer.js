@@ -3,15 +3,17 @@ import ResCard from "./Rescard";
 import { useEffect, useState } from "react";
 import Shimmer from "./Shimmer";
 import StatusError from "./StatusError";
+import { Link } from "react-router-dom";
+import useOnlineStatus from "../utils/useOnlineStatus";
+import NetworkError from "./NetworkError";
+
 
 const ResContainer = () => {
   const [listOfRests, setListOfrests] = useState([]);
-
   const [filteredList, setFilteredList] = useState([]);
-
   const [searchTextBtn, setSearchTextBtn] = useState("");
-
   const [errorRender, setErrorrender] = useState("");
+  const onlineStatus = useOnlineStatus();
 
   useEffect(() => {
     fetchData();
@@ -22,7 +24,6 @@ const ResContainer = () => {
       const data = await fetch(
         "https://www.swiggy.com/dapi/restaurants/list/v5?lat=18.5917357&lng=73.74562809999999&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
       );
-      console.log(data.status);
       if (data.status != 200) {
         throw new Error("Unable to fetch data");
       }
@@ -47,6 +48,9 @@ const ResContainer = () => {
   //   if(listOfRests.length===0){
   //     return <Shimmer />
   //    }
+ if (onlineStatus===false){
+  return <NetworkError />
+ }
 
   return errorRender ? (
     <StatusError />
@@ -92,7 +96,7 @@ const ResContainer = () => {
       </div>
       <div className="res-container">
         {filteredList.map((rest) => {
-          return <ResCard key={rest?.info?.id} resData={rest} />;
+          return <Link to={"/restaurants/"+rest?.info?.id} key={rest?.info?.id}><ResCard resData={rest} /></Link>;
         })}
       </div>
     </>
