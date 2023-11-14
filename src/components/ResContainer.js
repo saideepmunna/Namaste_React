@@ -1,12 +1,13 @@
 // import { resArr } from "../utils/mockData";
-import ResCard from "./Rescard";
-import { useEffect, useState } from "react";
+import ResCard, { withPromotedLabel } from "./Rescard";
+import { useContext, useEffect, useState } from "react";
 import Shimmer from "./Shimmer";
 import StatusError from "./StatusError";
 import { Link } from "react-router-dom";
 import useOnlineStatus from "../utils/useOnlineStatus";
 import NetworkError from "./NetworkError";
-
+import MyContext from "../utils/MyContext";
+import { useContext } from "react";
 
 const ResContainer = () => {
   const [listOfRests, setListOfrests] = useState([]);
@@ -15,20 +16,27 @@ const ResContainer = () => {
   const [errorRender, setErrorrender] = useState("");
   const onlineStatus = useOnlineStatus();
 
+  const RestCardPromoted = withPromotedLabel(ResCard);
+
+  const {myName, setMyName} = useContext(MyContext)
+  
+
   useEffect(() => {
     fetchData();
-  },[]);
+  }, []);
 
   const fetchData = async () => {
     try {
       const data = await fetch(
-        "https://www.swiggy.com/dapi/restaurants/list/v5?lat=18.5917357&lng=73.74562809999999&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
-      );
+           "https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9698196&lng=77.7499721&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
+        );
       if (data.status != 200) {
         throw new Error("Unable to fetch data");
       }
 
       const json = await data.json();
+
+      // console.log(json);
       //optional chaining
       setListOfrests(
         json?.data?.cards[5]?.card?.card?.gridElements?.infoWithStyle
@@ -39,7 +47,7 @@ const ResContainer = () => {
           ?.restaurants
       );
     } catch (err) {
-      console.log(typeof err)
+      console.log(typeof err);
       setErrorrender(err.message);
     }
   };
@@ -48,27 +56,29 @@ const ResContainer = () => {
   //   if(listOfRests.length===0){
   //     return <Shimmer />
   //    }
- if (onlineStatus===false){
-  return <NetworkError />
- }
+  // console.log(filteredList);
+
+  if (onlineStatus === false) {
+    return <NetworkError />;
+  }
 
   return errorRender ? (
     <StatusError />
   ) : filteredList.length === 0 ? (
     <Shimmer />
   ) : (
-    <>
-      <div className="additions">
-        <div>
+    <div className="bg-slate-50">
+      <div className="flex">
+        <div className="flex justify-between m-4">
           <input
-            className="inputBar"
+            className="border-solid border-2 border-sky-500 p-1 rounded-lg mx-2 "
             value={searchTextBtn}
             onChange={(e) => {
               setSearchTextBtn(e.target.value);
             }}
           ></input>
           <button
-            className="searchBtn"
+            className="bg-purple-300 px-2 rounded-lg mx-2"
             onClick={() => {
               let searchedList = listOfRests.filter((rest) => {
                 return rest.info.name
@@ -80,26 +90,41 @@ const ResContainer = () => {
           >
             Search
           </button>
+
+          <button
+            className="ml-36 bg-purple-300 px-2 rounded-lg "
+            onClick={() => {
+              const filteredListItems = listOfRests.filter((restaurant) => {
+                return restaurant.info.avgRating > 4.2;
+              });
+              setFilteredList(filteredListItems); // to update the state Variable which binds with UI.
+            }}
+            //Whenever the state variable updates, React will trigger the reconciliation process(It will re-render the component)
+          >
+            Top rated restaurants
+          </button>
+          <input
+            className="border-2 ml-3 px-2 font-normal" value={myName} placeholder="Type for live loading"
+            onChange={(e) => {
+              setMyName(e.target.value);
+            }}
+          ></input>
         </div>
-        <button
-          className="filter"
-          onClick={() => {
-            const filteredListItems = listOfRests.filter((restaurant) => {
-              return restaurant.info.avgRating > 4.2;
-            });
-            setFilteredList(filteredListItems); // to update the state Variable which binds with UI.
-          }}
-          //Whenever the state variable updates, React will trigger the reconciliation process(It will re-render the component)
-        >
-          Click to filter
-        </button>
       </div>
-      <div className="res-container">
+      <div className="grid grid-cols-4 gap-5 w-10/12 mx-auto">
         {filteredList.map((rest) => {
-          return <Link to={"/restaurants/"+rest?.info?.id} key={rest?.info?.id}><ResCard resData={rest} /></Link>;
+          return (
+            <Link to={"/restaurants/" + rest?.info?.id} key={rest?.info?.id}>
+              {rest.info.avgRating >= 4.1 ? (
+                <RestCardPromoted resData={rest} />
+              ) : (
+                <ResCard resData={rest} />
+              )}
+            </Link>
+          );
         })}
       </div>
-    </>
+    </div>
   );
 };
 
